@@ -1,6 +1,7 @@
 import numpy as np
 from tkinter import *
 import math
+import time
 
 
 class Edges:
@@ -14,8 +15,51 @@ class Edges:
                                [0, 0, 1, 0],
                                [350, 150, 0, 1]]).transpose()
 
+
     def __init__(self):
         self.edges = np.loadtxt('edges.txt')
+
+    @staticmethod
+    def jump(canvas):
+        y = 0
+        sleep = 0.01
+        y_numbers = []
+        jumpCount = 10
+        isJump = True
+        while isJump:
+            if jumpCount >= -10:
+                if jumpCount < 0:
+                    # y = abs(y)
+                    # y += (jumpCount ** 2) / 20
+                    print(y_numbers)
+                    for elem in y_numbers:
+                        matrix_moving = np.array([
+                            [1, 0, 0, 0],
+                            [0, 1, 0, 0],
+                            [0, 0, 1, 0],
+                            [0, abs(elem), 0, 1]
+                        ]).transpose()
+                        edges.edges = multiplication(matrix_moving)
+                        drawing(canvas)
+                        time.sleep(sleep)
+                        canvas.update()
+                        isJump = False
+                else:
+                    y -= (jumpCount ** 2) / 20
+                    matrix_moving = np.array([
+                        [1, 0, 0, 0],
+                        [0, 1, 0, 0],
+                        [0, 0, 1, 0],
+                        [0, y, 0, 1]
+                    ]).transpose()
+                    y_numbers.append(y)
+                    edges.edges = multiplication(matrix_moving)
+                    drawing(canvas)
+                jumpCount -= 1
+            else:
+                jumpCount = 10
+            time.sleep(sleep)
+            canvas.update()
 
     @staticmethod
     def read_from_file():
@@ -174,6 +218,8 @@ def main():
 
     button_reset = Button(root, text="Сбросить изменения", command=lambda: [reset(), drawing(canvas)]).place(x=740,
                                                                                                              y=500)
+
+    buttom_jump = Button(root, text="Прыжок", command=lambda : [edges.jump(canvas)]).place(x=740, y=550)
     root.mainloop()
 
 
